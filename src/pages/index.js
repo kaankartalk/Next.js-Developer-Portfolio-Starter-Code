@@ -30,10 +30,10 @@ export default function Home() {
       <main className="page">
         {/* NAVBAR */}
         <nav className="navbar">
-          <a href="/" className="nav-logo">KKK</a>
+          <Link href="/" className="nav-logo">KKK</Link>
           <div className="nav-links">
-            <a href="/">Home</a>
-            <a href="/blog">Blog</a>
+            <Link href="/">Home</Link>
+            <Link href="/blog">Blog</Link>
             <a href="#contact">Contact</a>
           </div>
         </nav>
