@@ -105,8 +105,8 @@ export default function Home() {
           min-height: 100vh;
           background: #0a0a0a;
           color: #ededed;
-          padding: 4rem 1.5rem;
-          max-width: 800px;
+          padding: 4rem 2 rem;
+          max-width: 1100px;
           margin: 0 auto;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
