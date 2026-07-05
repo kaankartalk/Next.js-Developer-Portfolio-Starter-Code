@@ -1,20 +1,6 @@
 import Head from 'next/head'
 import Link from 'next/link'
-
-const projects = [
-  {
-    title: 'Proje Adı 1',
-    description: 'Bu projenin kısa açıklamasını buraya yazacaksın.',
-    tech: 'Python, Pandas, Scikit-learn',
-    link: '#',
-  },
-  {
-    title: 'Proje Adı 2',
-    description: 'Bu projenin kısa açıklamasını buraya yazacaksın.',
-    tech: 'SQL, NumPy',
-    link: '#',
-  },
-]
+import { projects, categories } from '../data/projects'
 
 const skills = ['SQL', 'Python', 'Scikit-learn', 'Pandas', 'NumPy']
 
@@ -65,23 +51,31 @@ export default function Home() {
         </section>
 
         {/* PROJELER */}
-        <section className="section">
+        <section className="section" id="projects">
           <h3>Projeler</h3>
-          <div className="projects">
-            {projects.map((project) => (
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="project-card"
-                key={project.title}
-              >
-                <h4>{project.title}</h4>
-                <p>{project.description}</p>
-                <span className="tech">{project.tech}</span>
-              </a>
-            ))}
-          </div>
+          {categories.map((category) => {
+            const categoryProjects = projects.filter((p) => p.category === category.id)
+            if (categoryProjects.length === 0) return null
+
+            return (
+              <div className="category-group" key={category.id}>
+                <h4 className="category-label">{category.label}</h4>
+                <div className="projects">
+                  {categoryProjects.map((project) => (
+                    <Link
+                      href={`/projects/${project.slug}`}
+                      className="project-card"
+                      key={project.slug}
+                    >
+                      <h4>{project.title}</h4>
+                      <p>{project.shortDescription}</p>
+                      <span className="tech">{project.tech}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
         </section>
 
         {/* İLETİŞİM */}
@@ -172,6 +166,18 @@ export default function Home() {
           padding: 0.4rem 0.9rem;
           border-radius: 999px;
           font-size: 0.9rem;
+        }
+        .category-group {
+          margin-bottom: 2rem;
+        }
+        .category-group:last-child {
+          margin-bottom: 0;
+        }
+        .category-label {
+          font-size: 1rem;
+          color: #9ca3af;
+          margin-bottom: 0.8rem;
+          font-weight: 500;
         }
         .projects {
           display: grid;
