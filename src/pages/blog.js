@@ -7,16 +7,16 @@ const posts = [
     title: 'Understanding Banking as a Service (BaaS) — Part I',
     date: '2024-10-22',
     summary:
-      'Açık bankacılığın yükselişini, PSD1/PSD2 düzenlemelerinin bu değişimdeki rolünü ve BaaS ile Open Banking arasındaki farkı ele aldığım yazı.',
+      'This article discusses the rise of open banking, the role of PSD1/PSD2 regulations in this change, and the difference between BaaS and open banking.',
     externalLink:
       'https://medium.com/@kkaankartal/understanding-banking-as-a-service-baas-and-its-role-in-the-digital-transformation-of-financial-8fe212af37ef',
     source: 'Medium',
   },
   {
-    slug: 'yakinda',
-    title: 'Yakında...',
+    slug: 'Coming Soon',
+    title: '...',
     date: '2026-07-04',
-    summary: 'Buraya yeni öğrendiğim konular, projelerim ve gözlemlerim hakkında yazılar ekleyeceğim.',
+    summary: "I will add posts here about new topics I've learned, my projects, and my observations.",
   },
 ]
 
