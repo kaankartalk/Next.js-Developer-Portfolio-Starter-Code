@@ -33,11 +33,19 @@ export const projects = [
     sections: [
       {
         heading: 'Problem',
-        body: "Under the EU's Common Agricultural Policy (CAP), farmers receive annual subsidies based on the land use type they declare. Some parcels are later converted to unauthorized uses while still being declared and subsidized as farmland. Manual field inspections to catch this are slow and expensive at scale.",
+        body: "Under the EU's Common Agricultural Policy (CAP), farmers receive annual subsidies based on the land use type they declare (e.g., \"cropland\"). However, some parcels are later converted to unauthorized uses — industrial development, abandonment, residential expansion — while still being declared and subsidized as farmland. Detecting this via manual field inspections is slow and expensive at scale.",
       },
       {
-        heading: 'Approach',
-        body: 'A convolutional neural network was trained on the EuroSAT dataset (27,000 labeled Sentinel-2 tiles across 10 land cover classes) to classify the true land use type of a satellite image tile. A compliance screening simulation then compares a simulated "declared" land type against the model\'s prediction, flagging mismatches for review.',
+        heading: 'Solution',
+        body: "This project uses a deep learning model trained on ESA's Sentinel-2 satellite imagery to automatically predict the actual land use type of a parcel. When the declared type doesn't match the model's prediction, the parcel is flagged for priority field inspection.",
+      },
+      {
+        heading: 'Data',
+        body: 'Source: EuroSAT (Sentinel-2 satellite imagery, ESA). 10 land use classes: Cropland (2 types), Forest, Pasture, Industrial, Residential, River, Lake, Highway, Herbaceous vegetation. 27,000 labeled images.',
+      },
+      {
+        heading: 'Method',
+        body: 'Convolutional Neural Network (CNN) for image classification, followed by a "declared vs. actual" mismatch analysis to simulate a compliance screening pipeline.',
       },
       {
         heading: 'Results',
