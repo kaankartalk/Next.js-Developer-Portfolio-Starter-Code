@@ -16,7 +16,7 @@ export default function Home() {
       <main className="page">
         {/* NAVBAR */}
         <nav className="navbar">
-          <Link href="/" className="nav-logo">KKK</Link>
+          <Link href="/" className="nav-logo">Kaan Kartal Kuyucu</Link>
           <div className="nav-links">
             <Link href="/">Home</Link>
             <Link href="/blog">Blog</Link>

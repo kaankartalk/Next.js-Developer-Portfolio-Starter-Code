@@ -3,6 +3,58 @@ import Link from 'next/link'
 
 const posts = [
   {
+    slug: 'cloud-computing',
+    title: 'Understanding Cloud Computing',
+    date: '2025-05-21',
+    summary: 'Diving deep into the world of cloud computing.',
+    externalLink: 'https://medium.com/@kkaankartal/understanding-cloud-computing-e8696321788a',
+    source: 'Medium',
+  },
+  {
+    slug: 'azure-ai-data-services',
+    title: 'A Simple Guide to Azure AI and Data Services',
+    date: '2025-02-18',
+    summary: "An introductory overview of Azure's AI and data capabilities.",
+    externalLink:
+      'https://medium.com/@kkaankartal/a-simple-guide-to-azure-ai-and-data-services-6f435440eba9',
+    source: 'Medium',
+  },
+  {
+    slug: 'salesforce-unique',
+    title: 'What Makes Salesforce Unique?',
+    date: '2024-12-02',
+    summary: 'Exploring how Salesforce is a platform designed to bring people and data together.',
+    externalLink: 'https://medium.com/@kkaankartal/what-makes-salesforce-unique-2f3d1930130e',
+    source: 'Medium',
+  },
+  {
+    slug: 'baas-part-3',
+    title: 'Part III: Challenges & Opportunities and Future Trends & Prospects — Banking as a Service (BaaS)',
+    date: '2024-11-04',
+    summary: 'Addresses the challenges and opportunities shaping the BaaS sector going forward.',
+    externalLink:
+      'https://medium.com/@kkaankartal/part-iii-challenges-opportunities-and-future-trends-prospects-banking-as-a-service-baas-7b3bba1a8ccd',
+    source: 'Medium',
+  },
+  {
+    slug: 'baas-part-2',
+    title: 'Part II: What is the Appropriate Level of Openness? — Banking as a Service (BaaS)',
+    date: '2024-10-29',
+    summary: 'Discusses open banking concepts and PSD2 regulations in Europe.',
+    externalLink:
+      'https://medium.com/@kkaankartal/part-ii-what-is-the-appropriate-level-of-openness-banking-as-a-service-baas-ee2f15bb595a',
+    source: 'Medium',
+  },
+  {
+    slug: '3lod-ai',
+    title: 'Three Lines of Defence (3LOD) Meets AI: Transforming Risk Management',
+    date: '2024-10-28',
+    summary: 'Examines how the Three Lines of Defense model integrates with AI for modern risk management.',
+    externalLink:
+      'https://medium.com/@kkaankartal/three-lines-of-defence-3lod-meets-ai-transforming-risk-management-for-the-next-generation-of-2fff449506ab',
+    source: 'Medium',
+  },
+  {
     slug: 'baas-part-1',
     title: 'Understanding Banking as a Service (BaaS) — Part I',
     date: '2024-10-22',
