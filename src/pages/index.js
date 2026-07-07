@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { projects, categories } from '../data/projects'
+import Nav from '../components/Nav'
+import { categories } from '../data/projects'
 
 const skills = ['SQL', 'Python', 'Scikit-learn', 'Pandas', 'NumPy']
 
@@ -14,15 +15,7 @@ export default function Home() {
       </Head>
 
       <main className="page">
-        {/* NAVBAR */}
-        <nav className="navbar">
-          <Link href="/" className="nav-logo">Kaan Kartal Kuyucu</Link>
-          <div className="nav-links">
-            <Link href="/">Home</Link>
-            <Link href="/blog">Medium Stories</Link>
-            <a href="#contact">Contact</a>
-          </div>
-        </nav>
+        <Nav showLogo />
 
         {/* HERO / HAKKIMDA */}
         <section className="hero">
@@ -54,27 +47,12 @@ export default function Home() {
         <section className="section" id="projects">
           <h3>What I&apos;m curious about</h3>
           <div className="curious-list">
-            {categories.map((category) => {
-              const categoryProjects = projects.filter((p) => p.category === category.id)
-              const firstProject = categoryProjects[0]
-
-              const content = (
-                <>
-                  <h4>{category.label}</h4>
-                  <p>{category.blurb}</p>
-                </>
-              )
-
-              return firstProject ? (
-                <Link href={`/projects/${firstProject.slug}`} className="curious-card" key={category.id}>
-                  {content}
-                </Link>
-              ) : (
-                <div className="curious-card" key={category.id}>
-                  {content}
-                </div>
-              )
-            })}
+            {categories.map((category) => (
+              <Link href={`/topics/${category.id}`} className="curious-card" key={category.id}>
+                <h4>{category.label}</h4>
+                <p>{category.blurb}</p>
+              </Link>
+            ))}
           </div>
         </section>
 
@@ -169,30 +147,36 @@ export default function Home() {
         }
         .curious-list {
           display: grid;
-          gap: 1.5rem;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1.2rem;
+        }
+        @media (max-width: 700px) {
+          .curious-list {
+            grid-template-columns: 1fr;
+          }
         }
         .curious-card {
           display: block;
-          padding-bottom: 1.5rem;
-          border-bottom: 1px solid #1f1f1f;
+          background: #141414;
+          border: 1px solid #262626;
+          border-radius: 12px;
+          padding: 1.4rem;
           text-decoration: none;
           color: inherit;
+          transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
         }
-        .curious-card:last-child {
-          border-bottom: none;
-          padding-bottom: 0;
+        .curious-card:hover {
+          background: #1c3a2c;
+          border-color: #83c5a0;
+          transform: translateY(-2px);
         }
         .curious-card h4 {
           font-size: 1.1rem;
           margin-bottom: 0.4rem;
-          transition: color 0.2s;
-        }
-        a.curious-card:hover h4 {
-          color: #9ca3af;
         }
         .curious-card p {
           color: #b0b0b0;
-          font-size: 0.95rem;
+          font-size: 0.9rem;
           line-height: 1.6;
         }
         .contact {

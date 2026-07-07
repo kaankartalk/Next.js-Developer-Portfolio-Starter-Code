@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import Link from 'next/link'
+import Nav from '../components/Nav'
 
 const posts = [
   {
@@ -74,11 +74,7 @@ export default function Blog() {
       </Head>
 
       <main className="page">
-        <nav className="nav">
-          <Link href="/">Home</Link>
-          <Link href="/blog">Medium Stories</Link>
-          <Link href="/#contact">Contact</Link>
-        </nav>
+        <Nav />
 
         <h1>Medium Stories</h1>
 
@@ -118,21 +114,6 @@ export default function Blog() {
           max-width: 800px;
           margin: 0 auto;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-        .nav {
-          display: flex;
-          gap: 1.5rem;
-          margin-bottom: 3rem;
-        }
-        .nav :global(a) {
-          color: #ededed;
-          text-decoration: none;
-          font-size: 0.95rem;
-          opacity: 0.8;
-        }
-        .nav :global(a:hover) {
-          opacity: 1;
-          text-decoration: underline;
         }
         h1 {
           font-size: 2rem;

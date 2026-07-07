@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import Nav from '../../components/Nav'
 import { projects } from '../../data/projects'
 
 export default function ProjectDetail() {
@@ -25,11 +26,7 @@ export default function ProjectDetail() {
       </Head>
 
       <main className="page">
-        <nav className="nav">
-          <Link href="/">Home</Link>
-          <Link href="/blog">Medium Stories</Link>
-          <Link href="/#contact">Contact</Link>
-        </nav>
+        <Nav />
 
         <Link href="/#projects" className="back-link">
           Back to Projects
@@ -92,21 +89,6 @@ export default function ProjectDetail() {
           max-width: 800px;
           margin: 0 auto;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-        .nav {
-          display: flex;
-          gap: 1.5rem;
-          margin-bottom: 2rem;
-        }
-        .nav :global(a) {
-          color: #ededed;
-          text-decoration: none;
-          font-size: 0.95rem;
-          opacity: 0.8;
-        }
-        .nav :global(a:hover) {
-          opacity: 1;
-          text-decoration: underline;
         }
         .back-link {
           display: inline-block;
