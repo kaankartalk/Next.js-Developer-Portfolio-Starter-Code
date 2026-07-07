@@ -3,11 +3,13 @@ export const categories = [
     id: 'space',
     label: 'Space',
     blurb: 'Using satellite imagery and deep learning to catch land-use compliance issues before they become a problem.',
+    tags: ['Satellite Imagery', 'Orbital Mechanics', 'Satellite Collision Risk', 'Remote Sensing', 'Computer Vision'],
   },
   {
     id: 'finance',
     label: 'Finance',
     blurb: 'Exploring how Banking-as-a-Service and open banking are reshaping financial infrastructure.',
+    tags: ['Fintech', 'Open Banking', 'Banking-as-a-Service', 'Risk Modeling', 'Data Literacy'],
   },
   {
     id: 'customer-experience',

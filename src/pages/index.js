@@ -47,12 +47,26 @@ export default function Home() {
         <section className="section" id="projects">
           <h3>What I&apos;m curious about</h3>
           <div className="curious-list">
-            {categories.map((category) => (
-              <Link href={`/topics/${category.id}`} className="curious-card" key={category.id}>
-                <h4>{category.label}</h4>
-                <p>{category.blurb}</p>
-              </Link>
-            ))}
+            {categories.map((category) => {
+              const visibleTags = (category.tags || []).slice(0, 4)
+              const extraTagCount = (category.tags || []).length - visibleTags.length
+              return (
+                <Link href={`/topics/${category.id}`} className="curious-card" key={category.id}>
+                  <h4>{category.label}</h4>
+                  <p>{category.blurb}</p>
+                  {visibleTags.length > 0 ? (
+                    <div className="tag-row">
+                      {visibleTags.map((tag) => (
+                        <span className="tag-chip" key={tag}>
+                          {tag}
+                        </span>
+                      ))}
+                      {extraTagCount > 0 ? <span className="tag-overflow">+{extraTagCount}</span> : null}
+                    </div>
+                  ) : null}
+                </Link>
+              )
+            })}
           </div>
         </section>
 
@@ -178,6 +192,26 @@ export default function Home() {
           color: #b0b0b0;
           font-size: 0.9rem;
           line-height: 1.6;
+        }
+        .tag-row {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 0.4rem;
+          margin-top: 0.9rem;
+        }
+        .tag-chip {
+          background: #1c1c1c;
+          border: 1px solid #2e2e2e;
+          border-radius: 6px;
+          padding: 0.25rem 0.55rem;
+          font-size: 0.72rem;
+          color: #9ca3af;
+          white-space: nowrap;
+        }
+        .tag-overflow {
+          font-size: 0.72rem;
+          color: #6b6b6b;
         }
         .contact {
           display: flex;
