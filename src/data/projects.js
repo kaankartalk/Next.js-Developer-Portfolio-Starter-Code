@@ -306,4 +306,143 @@ Parcels flagged: 579 (vs 1496 before)`,
       },
     ],
   },
+  {
+    slug: 'satellite-collision-risk',
+    category: 'space',
+    title: 'Satellite Collision Risk Analysis',
+    shortDescription:
+      'A simplified conjunction-assessment pipeline: live TLE data, SGP4 orbit propagation, and pairwise close-approach screening to flag which satellites are about to pass dangerously close to each other.',
+    tech: 'Python, Skyfield (SGP4), NumPy, pandas, SciPy, Matplotlib, live CelesTrak API',
+    githubLink: 'https://github.com/kaankartalk/Space',
+    images: [],
+    sections: [
+      {
+        heading: 'Problem',
+        body: "On February 11, 2009, two intact satellites — Kosmos-2251 and Iridium 33 — collided in orbit for the first time in history, creating over 2,000 pieces of trackable debris. With 10,000+ active satellites now in orbit, a large share of them packed into megaconstellations, figuring out which satellite pairs are about to come dangerously close is a continuous operational problem for satellite operators: every maneuver costs fuel and shortens a satellite's service life, but not maneuvering risks the satellite — and, in the worst case, a debris cascade (the 'Kessler Syndrome') that threatens every other satellite sharing that orbital shell.",
+      },
+      {
+        heading: 'Solution',
+        body: "A simplified but real-data-driven 'conjunction assessment' pipeline — the same category of process the U.S. Space Force's 18th Space Defense Squadron runs at scale. It pulls live orbital data for a LEO megaconstellation, propagates every satellite's position 24 hours forward, screens all pairs for close approaches, and scores/ranks the results by how urgent each one is. Scope is stated explicitly: satellites are treated as point masses and the risk score is a ranking heuristic, not a calibrated collision probability — real systems require object size and position-uncertainty data that isn't publicly available.",
+      },
+      {
+        heading: 'Data',
+        body: "Source: live Two-Line Element (TLE) sets from CelesTrak, fetched directly from their per-constellation endpoint. TLEs are the standard format for describing a satellite's orbit — published by the U.S. Space Force and refreshed roughly every 2 hours. Because CelesTrak explicitly rate-limits repeat downloads of the same group within that window, the fetch function caches each group to disk and falls back to the cached copy if a fresh request is declined — a small but real piece of data-engineering hygiene that mattered the moment this pipeline hit that live rate limit while being built.",
+      },
+      {
+        heading: 'Step 1 — Fetching Live Orbital Data',
+        body: "Rather than downloading the entire ~10,000+ satellite active catalog and filtering client-side, the pipeline queries CelesTrak's dedicated constellation endpoint directly — faster, and better-scoped. (The pipeline actually pivoted from Starlink to OneWeb mid-build after hitting CelesTrak's real 2-hour rate limit on the Starlink group — the caching logic below is what makes that kind of hiccup a non-event on any future run.)",
+        code: `def fetch_tle_group(group, ts):
+    """Download a named TLE group from CelesTrak, caching to disk
+    to respect their 2-hour update cadence."""
+    cache_path = os.path.join(CACHE_DIR, f"{group}.tle")
+    is_fresh = (
+        os.path.exists(cache_path)
+        and (time.time() - os.path.getmtime(cache_path)) / 3600 < CACHE_TTL_HOURS
+    )
+    if not is_fresh:
+        url = f"https://celestrak.org/NORAD/elements/gp.php?GROUP={group}&FORMAT=tle"
+        try:
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+            with open(cache_path, "w") as f:
+                f.write(response.text)
+        except requests.exceptions.HTTPError:
+            if os.path.exists(cache_path):
+                print(f"CelesTrak declined a fresh '{group}' download — using cache.")
+            else:
+                raise
+    # ...parse cached TLE lines into Skyfield EarthSatellite objects
+    return satellites
+
+constellation_sats = fetch_tle_group("oneweb", ts)
+print(f"Satellites loaded: {len(constellation_sats)}")`,
+        output: `Oneweb satellites loaded: 651
+First 5: ['ONEWEB-0012', 'ONEWEB-0010', 'ONEWEB-0008', 'ONEWEB-0007', 'ONEWEB-0006']`,
+      },
+      {
+        heading: 'Step 2 — Why Altitude Is Everything',
+        body: "Satellites cluster into altitude 'shells': LEO (~300–2,000 km) is where megaconstellations and almost all satellite collisions happen; MEO (~2,000–35,000 km) hosts GPS/GNSS constellations; GEO (~35,786 km) hosts broadcast satellites spread around one large ring, naturally far apart. Altitude is estimated directly from a TLE's mean motion via Kepler's Third Law, then the sample is narrowed to one constellation — satellites flying in tightly coordinated, nearby shells by design, where close approaches are actually likely — and capped at 300 satellites, since pairwise comparison cost grows with the square of the sample size (300 → ~45,000 pairs; 3,000 → ~4.5 million).",
+        code: `def altitude_km(sat):
+    """Estimate circular-orbit altitude from mean motion (Kepler's 3rd Law)."""
+    mean_motion_rad_s = sat.model.no_kozai / 60.0
+    semi_major_axis_km = (MU_EARTH / mean_motion_rad_s ** 2) ** (1 / 3)
+    return semi_major_axis_km - EARTH_RADIUS_KM
+
+sample_idx = rng.choice(len(constellation_sats), size=300, replace=False)
+sample_sats = [constellation_sats[i] for i in sample_idx]`,
+        output: `Sample altitudes (km) for first 10: [1205, 1205, 1205, 1209, 1209, 1209, 1232, 1229, 1229, 1229]
+Working sample: 300 Oneweb satellites`,
+      },
+      {
+        heading: 'Step 3 — Orbit Propagation with SGP4',
+        body: "A TLE only describes a satellite's orbit at one instant. Predicting where it'll be in 24 hours requires accounting for atmospheric drag, Earth's equatorial bulge (J2 perturbation), and other effects a plain two-body model ignores. SGP4 (Simplified General Perturbations 4) is the industry-standard analytical model built specifically for this, used via the Skyfield library. Every satellite in the sample is propagated across a 24-hour window in 5-minute steps, collecting both position and velocity — velocity is needed later to judge how fast two satellites are closing on each other.",
+        code: `n_steps = (24 * 60) // 5 + 1  # 289 steps
+now = ts.now()
+times = ts.tt_jd(now.tt + np.arange(n_steps) * 5 / 1440.0)
+
+positions_km = np.empty((len(sample_sats), 3, n_steps))
+velocities_km_s = np.empty((len(sample_sats), 3, n_steps))
+for i, sat in enumerate(sample_sats):
+    geocentric = sat.at(times)
+    positions_km[i] = geocentric.position.km
+    velocities_km_s[i] = geocentric.velocity.km_per_s`,
+        output: `Propagating 300 satellites across 289 time steps (24h window, every 5 min)...
+positions_km shape: (300, 3, 289)  (satellites, xyz, time_steps)`,
+      },
+      {
+        heading: 'Step 4 — Conjunction Detection',
+        body: "With 300 satellites, there are ~45,000 unique pairs to screen — the full ~10,000-satellite catalog would be ~50 million, which is exactly why real systems use spatial filtering before expensive precise geometry (this pipeline's constellation-level filtering is a coarse version of that same idea). For every pair, the algorithm steps through all 289 time samples tracking the smallest distance seen — the Time of Closest Approach (TCA), the same term used operationally — and keeps only pairs whose miss distance falls under a 25 km screening threshold (real systems use a directional 3D box; a sphere is a defensible simplification here).",
+        code: `pair_indices = list(itertools.combinations(range(n_sats), 2))
+min_distance_km = np.full(len(pair_indices), np.inf)
+min_distance_time_idx = np.zeros(len(pair_indices), dtype=int)
+
+for t in range(n_steps):
+    dists_at_t = pdist(positions_km[:, :, t])  # condensed pairwise distances
+    improved = dists_at_t < min_distance_km
+    min_distance_km[improved] = dists_at_t[improved]
+    min_distance_time_idx[np.where(improved)[0]] = t
+
+close_calls = conjunctions[conjunctions["miss_distance_km"] < 25.0]`,
+        output: `Pairs screened: 44,850
+Pairs under the 25 km screening threshold: 13`,
+      },
+      {
+        heading: 'Step 5 — Risk Scoring',
+        body: "Miss distance alone doesn't capture urgency: two satellites drifting past at 25 km with little relative motion is very different from two satellites passing at a similar distance but several km/s of relative speed — far less reaction time, and more energy released if a collision did happen. The two signals are combined into a heuristic — relative speed divided by miss distance — explicitly framed as a ranking tool, not a calibrated probability, since that would require object size and position-uncertainty data no TLE provides. Each close call is also bucketed into a severity band (critical / serious / warning / monitor) based on physical miss distance.",
+        code: `def relative_speed_km_s(row):
+    i, j, t = int(row["idx_a"]), int(row["idx_b"]), int(row["tca_step"])
+    v_rel = velocities_km_s[i, :, t] - velocities_km_s[j, :, t]
+    return np.linalg.norm(v_rel)
+
+close_calls["relative_speed_km_s"] = close_calls.apply(relative_speed_km_s, axis=1)
+close_calls["risk_score"] = close_calls["relative_speed_km_s"] / close_calls["miss_distance_km"]`,
+        output: `   sat_a        sat_b        miss_distance_km  relative_speed_km_s  risk_score  severity
+0  ONEWEB-0304  ONEWEB-0387  12.58             10.36                 0.824      warning
+1  ONEWEB-0711  ONEWEB-0230  21.32             12.67                 0.594      monitor
+2  ONEWEB-0701  ONEWEB-0063   8.39              1.91                 0.228      serious`,
+      },
+      {
+        heading: 'Step 6 — Visualizing the Result',
+        body: "The ranked view surfaces the 10 riskiest pairs, colored by severity band with direct labels so no reader has to decode color alone. A second chart tracks separation distance over the full 24-hour window for the top 3 pairs — plotted on a log scale, since two satellites in similar orbits swing thousands of km apart every orbit (opposite sides of Earth) which would otherwise swamp the tens-of-km detail that actually matters. Each pair's Time of Closest Approach is marked directly on its curve.",
+        image: {
+          src: '/projects/satellite_collision_top10_risk.png',
+          alt: 'Bar chart ranking the top 10 closest satellite approaches by risk score, colored by severity band',
+          caption: 'Top 10 closest approaches in the next 24 hours, colored by severity band (critical/serious/warning/monitor).',
+        },
+      },
+      {
+        heading: 'Results',
+        body: "Screening 44,850 candidate pairs across a 300-satellite OneWeb sample over a 24-hour window surfaced 13 pairs closing to within the 25 km threshold — the closest at 8.4 km. The log-scale distance chart makes the underlying orbital rhythm visible (satellites in similar orbits sweep thousands of km apart every pass) while still clearly resolving the moment each risky pair dips toward its Time of Closest Approach.",
+        image: {
+          src: '/projects/satellite_collision_distance_over_time.png',
+          alt: 'Log-scale line chart of separation distance over 24 hours for the three closest satellite pairs, with each Time of Closest Approach marked',
+          caption: 'Separation distance over the next 24 hours for the 3 closest pairs (log scale) — dots mark each Time of Closest Approach.',
+        },
+      },
+      {
+        heading: 'Key Insight',
+        body: "The single most useful modeling decision here wasn't the risk formula — it was being explicit about what the model can't do. A TLE has no size or uncertainty data, so the 'risk score' is a ranking heuristic, not a real Pc (collision probability); stating that table of simplifications up front, rather than overselling the model, is what makes the result defensible. The same discipline showed up operationally too: hitting CelesTrak's real rate limit mid-build wasn't a bug to hide, it was a forcing function for the caching logic — the kind of production-grade handling that's easy to skip in a one-off script but matters the moment a pipeline runs on a schedule.",
+      },
+    ],
+  },
 ]
