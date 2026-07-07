@@ -19,7 +19,7 @@ export default function Home() {
           <Link href="/" className="nav-logo">Kaan Kartal Kuyucu</Link>
           <div className="nav-links">
             <Link href="/">Home</Link>
-            <Link href="/blog">Blog</Link>
+            <Link href="/blog">Medium Stories</Link>
             <a href="#contact">Contact</a>
           </div>
         </nav>
@@ -50,32 +50,32 @@ export default function Home() {
           </div>
         </section>
 
-        {/* PROJELER */}
+        {/* WHAT I'M CURIOUS ABOUT */}
         <section className="section" id="projects">
-          <h3>Projeler</h3>
-          {categories.map((category) => {
-            const categoryProjects = projects.filter((p) => p.category === category.id)
-            if (categoryProjects.length === 0) return null
+          <h3>What I&apos;m curious about</h3>
+          <div className="curious-list">
+            {categories.map((category) => {
+              const categoryProjects = projects.filter((p) => p.category === category.id)
+              const firstProject = categoryProjects[0]
 
-            return (
-              <div className="category-group" key={category.id}>
-                <h4 className="category-label">{category.label}</h4>
-                <div className="projects">
-                  {categoryProjects.map((project) => (
-                    <Link
-                      href={`/projects/${project.slug}`}
-                      className="project-card"
-                      key={project.slug}
-                    >
-                      <h4>{project.title}</h4>
-                      <p>{project.shortDescription}</p>
-                      <span className="tech">{project.tech}</span>
-                    </Link>
-                  ))}
+              const content = (
+                <>
+                  <h4>{category.label}</h4>
+                  <p>{category.blurb}</p>
+                </>
+              )
+
+              return firstProject ? (
+                <Link href={`/projects/${firstProject.slug}`} className="curious-card" key={category.id}>
+                  {content}
+                </Link>
+              ) : (
+                <div className="curious-card" key={category.id}>
+                  {content}
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </section>
 
         {/* İLETİŞİM */}
@@ -167,46 +167,33 @@ export default function Home() {
           border-radius: 999px;
           font-size: 0.9rem;
         }
-        .category-group {
-          margin-bottom: 2rem;
-        }
-        .category-group:last-child {
-          margin-bottom: 0;
-        }
-        .category-label {
-          font-size: 1rem;
-          color: #9ca3af;
-          margin-bottom: 0.8rem;
-          font-weight: 500;
-        }
-        .projects {
+        .curious-list {
           display: grid;
-          gap: 1rem;
+          gap: 1.5rem;
         }
-        .project-card {
+        .curious-card {
           display: block;
-          background: #141414;
-          border: 1px solid #262626;
-          border-radius: 10px;
-          padding: 1.2rem;
+          padding-bottom: 1.5rem;
+          border-bottom: 1px solid #1f1f1f;
           text-decoration: none;
           color: inherit;
-          transition: border-color 0.2s;
         }
-        .project-card:hover {
-          border-color: #555;
+        .curious-card:last-child {
+          border-bottom: none;
+          padding-bottom: 0;
         }
-        .project-card h4 {
+        .curious-card h4 {
+          font-size: 1.1rem;
           margin-bottom: 0.4rem;
+          transition: color 0.2s;
         }
-        .project-card p {
+        a.curious-card:hover h4 {
+          color: #9ca3af;
+        }
+        .curious-card p {
           color: #b0b0b0;
           font-size: 0.95rem;
-          margin-bottom: 0.6rem;
-        }
-        .tech {
-          font-size: 0.8rem;
-          color: #7c7c7c;
+          line-height: 1.6;
         }
         .contact {
           display: flex;

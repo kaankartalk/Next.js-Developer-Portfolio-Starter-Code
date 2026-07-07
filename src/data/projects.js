@@ -1,6 +1,19 @@
 export const categories = [
-  { id: 'space', label: 'Space & Earth Observation' },
-  { id: 'finance', label: 'Finance' },
+  {
+    id: 'space',
+    label: 'Space',
+    blurb: 'Using satellite imagery and deep learning to catch land-use compliance issues before they become a problem.',
+  },
+  {
+    id: 'finance',
+    label: 'Finance',
+    blurb: 'Exploring how Banking-as-a-Service and open banking are reshaping financial infrastructure.',
+  },
+  {
+    id: 'customer-experience',
+    label: 'Customer Experience',
+    blurb: 'Looking at how data-driven personalization and friction reduction shape customer loyalty.',
+  },
 ]
 
 export const projects = [

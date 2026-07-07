@@ -64,29 +64,23 @@ const posts = [
       'https://medium.com/@kkaankartal/understanding-banking-as-a-service-baas-and-its-role-in-the-digital-transformation-of-financial-8fe212af37ef',
     source: 'Medium',
   },
-  {
-    slug: 'Coming Soon',
-    title: '...',
-    date: '2026-07-04',
-    summary: "I will add posts here about new topics I've learned, my projects, and my observations.",
-  },
 ]
 
 export default function Blog() {
   return (
     <>
       <Head>
-        <title>Blog | Kaan Kartal Kuyucu</title>
+        <title>Medium Stories | Kaan Kartal Kuyucu</title>
       </Head>
 
       <main className="page">
         <nav className="nav">
           <Link href="/">Home</Link>
-          <Link href="/blog">Blog</Link>
+          <Link href="/blog">Medium Stories</Link>
           <Link href="/#contact">Contact</Link>
         </nav>
 
-        <h1>Blog</h1>
+        <h1>Medium Stories</h1>
 
         <div className="posts">
           {posts.map((post) =>

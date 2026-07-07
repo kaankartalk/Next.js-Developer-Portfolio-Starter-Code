@@ -27,7 +27,7 @@ export default function ProjectDetail() {
       <main className="page">
         <nav className="nav">
           <Link href="/">Home</Link>
-          <Link href="/blog">Blog</Link>
+          <Link href="/blog">Medium Stories</Link>
           <Link href="/#contact">Contact</Link>
         </nav>
 
