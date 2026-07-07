@@ -6,8 +6,9 @@ import { projects } from '../../data/projects'
 export default function ProjectDetail() {
   const router = useRouter()
   const { slug } = router.query
-
-  const project = projects.find((p) => p.slug === slug)
+  const project = projects.find(function (p) {
+    return p.slug === slug
+  })
 
   if (!project) {
     return (
@@ -31,55 +32,54 @@ export default function ProjectDetail() {
         </nav>
 
         <Link href="/#projects" className="back-link">
-          ← Back to Projects
+          Back to Projects
         </Link>
 
         <h1>{project.title}</h1>
         <p className="tech">{project.tech}</p>
 
-        {project.githubLink && (
-          
-            href={project.githubLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="github-link"
-          >
-            View on GitHub →
+        {project.githubLink ? (
+          <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="github-link">
+            View on GitHub
           </a>
-        )}
+        ) : null}
 
         <div className="sections">
-          {project.sections.map((section) => (
-            <div className="section-block" key={section.heading}>
-              <h3>{section.heading}</h3>
-              {section.body && <p>{section.body}</p>}
-              {section.code && (
-                <pre className="code-block">
-                  <code>{section.code}</code>
-                </pre>
-              )}
-              {section.output && (
-                <pre className="output-block">
-                  <code>{section.output}</code>
-                </pre>
-              )}
-              {section.image && (
-                <figure className="inline-figure">
-                  <img src={section.image.src} alt={section.image.alt} />
-                  <figcaption>{section.image.caption}</figcaption>
-                </figure>
-              )}
-            </div>
-          ))}
+          {project.sections.map(function (section) {
+            return (
+              <div className="section-block" key={section.heading}>
+                <h3>{section.heading}</h3>
+                {section.body ? <p>{section.body}</p> : null}
+                {section.code ? (
+                  <pre className="code-block">
+                    <code>{section.code}</code>
+                  </pre>
+                ) : null}
+                {section.output ? (
+                  <pre className="output-block">
+                    <code>{section.output}</code>
+                  </pre>
+                ) : null}
+                {section.image ? (
+                  <figure className="inline-figure">
+                    <img src={section.image.src} alt={section.image.alt} />
+                    <figcaption>{section.image.caption}</figcaption>
+                  </figure>
+                ) : null}
+              </div>
+            )
+          })}
         </div>
 
         <div className="images">
-          {project.images.map((image) => (
-            <figure key={image.src}>
-              <img src={image.src} alt={image.alt} />
-              <figcaption>{image.caption}</figcaption>
-            </figure>
-          ))}
+          {project.images.map(function (image) {
+            return (
+              <figure key={image.src}>
+                <img src={image.src} alt={image.alt} />
+                <figcaption>{image.caption}</figcaption>
+              </figure>
+            )
+          })}
         </div>
       </main>
 
@@ -159,7 +159,7 @@ export default function ProjectDetail() {
           line-height: 1.5;
           color: #c9d1d9;
           margin-top: 0.8rem;
-          font-family: 'SF Mono', Menlo, monospace;
+          font-family: Menlo, monospace;
         }
         .output-block {
           background: #050505;
@@ -171,7 +171,7 @@ export default function ProjectDetail() {
           line-height: 1.5;
           color: #9ca3af;
           margin-top: 0.6rem;
-          font-family: 'SF Mono', Menlo, monospace;
+          font-family: Menlo, monospace;
         }
         .inline-figure {
           margin: 1rem 0 0 0;
