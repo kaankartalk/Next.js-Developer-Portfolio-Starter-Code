@@ -35,11 +35,18 @@ export default function ProjectDetail() {
         <h1>{project.title}</h1>
         <p className="tech">{project.tech}</p>
 
-        {project.githubLink ? (
-          <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="github-link">
-            View on GitHub
-          </a>
-        ) : null}
+        <div className="link-row">
+          {project.githubLink ? (
+            <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="github-link">
+              View on GitHub
+            </a>
+          ) : null}
+          {project.dashboardLink ? (
+            <Link href={project.dashboardLink} className="dashboard-link">
+              Open Interactive Dashboard →
+            </Link>
+          ) : null}
+        </div>
 
         <div className="sections">
           {project.sections.map(function (section) {
@@ -109,12 +116,33 @@ export default function ProjectDetail() {
           font-size: 0.9rem;
           margin-bottom: 1rem;
         }
+        .link-row {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 1.2rem;
+          margin-bottom: 2.5rem;
+        }
         .github-link {
           display: inline-block;
           color: #ededed;
           text-decoration: underline;
           font-size: 0.9rem;
-          margin-bottom: 2.5rem;
+        }
+        .dashboard-link {
+          display: inline-block;
+          background: rgba(131, 197, 160, 0.12);
+          border: 1px solid #83c5a0;
+          color: #83c5a0;
+          text-decoration: none;
+          font-size: 0.9rem;
+          font-weight: 600;
+          padding: 0.5rem 1rem;
+          border-radius: 8px;
+          transition: background-color 0.2s;
+        }
+        .dashboard-link:hover {
+          background: rgba(131, 197, 160, 0.22);
         }
         .sections {
           display: grid;

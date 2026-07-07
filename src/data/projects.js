@@ -447,4 +447,103 @@ close_calls["risk_score"] = close_calls["relative_speed_km_s"] / close_calls["mi
       },
     ],
   },
+  {
+    slug: 'telecom-churn-retention',
+    category: 'finance',
+    title: 'Telecom Churn: From Prediction to Retention ROI',
+    shortDescription:
+      'Improves on a public Kaggle churn baseline (fixes data leakage and multicollinearity, beats its 77% accuracy on every metric), then adds an expected-value retention-targeting layer most churn projects skip — backed by a live, interactive dashboard.',
+    tech: 'Python, scikit-learn, XGBoost, Pandas, React/Recharts (live dashboard)',
+    githubLink: 'https://github.com/kaankartalk/Telecom-churn-retention',
+    dashboardLink: '/dashboard/telecom-churn',
+    images: [],
+    sections: [
+      {
+        heading: 'Problem',
+        body: "Telecom is a subscription business: acquiring a new customer costs 5-25x more than retaining an existing one, and this dataset's telecom operator loses 26.6% of its customers a year. Knowing who's likely to leave is only half the problem — a retention team also has a limited budget, and needs to know who is actually worth spending it on.",
+      },
+      {
+        heading: 'Solution',
+        body: "This project starts from a published Kaggle notebook (77% accuracy, XGBoost + SMOTE) and treats it as a baseline to improve on rather than a target to match. Three concrete issues surface and get fixed: a duplicated category causing multicollinearity, data leakage in how customers get scored, and two inconsistent models used for reporting vs. scoring. On top of the fixed, better-tuned model, a retention-ROI decision layer is added — the part most churn tutorials skip — culminating in a live dashboard where offer-cost and success-rate assumptions can be adjusted to see the targeting recommendation update in real time.",
+      },
+      {
+        heading: 'Data',
+        body: 'Source: IBM Telco Customer Churn dataset (7,043 customers, 21 features — demographics, subscribed services, contract/billing details, and churn outcome).',
+      },
+      {
+        heading: 'Step 1 — Fixing a Multicollinearity Bug',
+        body: 'Six columns each carry a "No internet service" category meaning exactly the same thing — InternetService == "No". Left as one-hot encoded duplicates, this caused logistic regression coefficients to overflow. Collapsing them into a single "No" indicator fixed the numerical instability and produced a cleaner feature-importance ranking downstream.',
+        code: `no_internet_cols = ["OnlineSecurity", "OnlineBackup", "DeviceProtection",
+                     "TechSupport", "StreamingTV", "StreamingMovies"]
+for c in no_internet_cols:
+    df[c] = df[c].replace("No internet service", "No")
+df["MultipleLines"] = df["MultipleLines"].replace("No phone service", "No")`,
+        output: `Categories collapsed. Example — OnlineSecurity now has: ['No' 'Yes']`,
+      },
+      {
+        heading: 'Step 2 — One Model, One Split, No Leakage',
+        body: "The baseline scores customers using the same model that trained on them — the probabilities it reports for 'high-risk' customers have already seen the answer key. Here, one model is trained on one split and used consistently for every downstream number.",
+        code: `X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.20, stratify=y, random_state=42
+)
+baseline_acc = accuracy_score(y_test, np.zeros_like(y_test))
+print(f"'Always predict no churn' baseline accuracy: {baseline_acc:.2%}")`,
+        output: `'Always predict no churn' baseline accuracy: 73.42%`,
+      },
+      {
+        heading: 'Step 3 — Tuned XGBoost + a Threshold Chosen on Purpose',
+        body: "The classifier's default 0.5 decision threshold has no special status — it's just where predict() draws the line if nobody thinks about it. After hyperparameter tuning (RandomizedSearchCV, 5-fold CV optimizing ROC-AUC), the threshold is chosen with a constrained rule: maximize F1 among thresholds that already match or beat the 77% baseline — so the final model wins on every metric at once, not by trading one for another.",
+        image: {
+          src: '/projects/churn_threshold_sweep.png',
+          alt: 'Line chart of accuracy, F1, precision, and recall against decision threshold, with the baseline accuracy and chosen threshold marked',
+          caption: 'Accuracy/F1/precision/recall vs. decision threshold — the chosen operating point beats the baseline on every metric.',
+        },
+      },
+      {
+        heading: 'Results — Model',
+        body: 'Accuracy 79.3% vs. the baseline\'s 77.0%. F1 (churn) 0.626 vs. 0.570. Precision 0.602 vs. 0.570. Recall 0.652 vs. 0.570. ROC-AUC 0.840 vs. 0.814 — a clean improvement across every metric, not a single cherry-picked number.',
+        image: {
+          src: '/projects/churn_by_contract.png',
+          alt: 'Bar chart of churn rate by contract type: 42.7% month-to-month, 11.3% one-year, 2.8% two-year',
+          caption: 'Contract type ends up as the single strongest churn driver — a 15x gap between month-to-month and two-year contracts.',
+        },
+      },
+      {
+        heading: 'Step 4 — A CLTV Bug That Cancels Out the Risk Score',
+        body: 'The baseline\'s CLTV formula — ARPU divided by churn probability — combined with an expected-benefit formula that multiplies by that same churn probability, algebraically cancels the risk score out of the targeting decision entirely: Expected Benefit = P × α × (ARPU / P) = α × ARPU, independent of P. Tried directly, zero customers ever clear a $100 offer cost. The fix: estimate CLTV from contract-type cohort behavior — independent of the customer\'s own risk score — so churn probability keeps doing real work in the decision.',
+        code: `# Naive: CLTV = ARPU / ChurnProbability -- P cancels out of the decision
+naive_cltv = df.ARPU / df.ChurnProbability.clip(lower=1/73)
+naive_benefit = df.ChurnProbability * 0.30 * naive_cltv
+print((naive_benefit - 100 > 0).sum())  # customers worth targeting
+
+# Fixed: CLTV from contract-type cohort survivor tenure, independent of own P
+survivor_tenure = df[df.Churn == 0].groupby("Contract")["tenure"].mean()
+df["CLTV"] = df["ARPU"] * df["Contract"].map(survivor_tenure)`,
+        output: `0
+# after the fix: 4,607 customers where the offer clears its cost`,
+      },
+      {
+        heading: 'Results — Retention ROI',
+        body: 'Expected-value-optimized targeting beats every naive alternative: "target everyone predicted to churn," "target only the highest-risk customers" (the baseline\'s implicit approach), and "target every customer." The optimized strategy captures value the others leave on the table in both directions — wasted spend on borderline cases, and missed medium-risk high-value saves.',
+        image: {
+          src: '/projects/churn_strategy_comparison.png',
+          alt: 'Horizontal bar chart comparing expected net value of four retention targeting strategies',
+          caption: 'Optimized (expected-value) targeting beats naive probability-threshold strategies by a real, quantified margin.',
+        },
+      },
+      {
+        heading: 'Interactive Dashboard',
+        body: 'Offer cost and success rate are assumptions, not measurements — so they\'re adjustable, not fixed. A live dashboard filters the full 7,032-customer scored dataset by contract, risk band, and tenure, and recomputes every KPI and chart — including the targeting-strategy comparison above — from whatever cost/success-rate assumptions are set, in real time.',
+        image: {
+          src: '/projects/churn_sensitivity.png',
+          alt: 'Heatmap of number of customers worth targeting across a grid of offer cost and success rate assumptions',
+          caption: 'How many customers clear the targeting bar shifts a lot with the cost/success-rate assumptions — exactly what the live dashboard lets you explore.',
+        },
+      },
+      {
+        heading: 'Key Insight',
+        body: "A churn model answers \"who's likely to leave?\" A retention budget needs the answer to \"who's worth spending money to keep, given what that spending costs and how often it works?\" Those are related but different questions, and conflating them is exactly how the baseline's CLTV formula quietly broke — dividing by a risk score in one step, then multiplying by that same risk score in the next, erases the one variable the whole decision was supposed to be based on. Catching that algebraically, not just empirically, is what turns a bug into a lesson worth keeping in the writeup.",
+      },
+    ],
+  },
 ]
