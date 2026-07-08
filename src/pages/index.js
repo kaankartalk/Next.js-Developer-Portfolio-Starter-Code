@@ -26,7 +26,7 @@ export default function Home() {
         <div className="content">
         <Nav showLogo />
 
-        {/* HERO / HAKKIMDA */}
+        {/* HERO / ABOUT */}
         <section className="hero">
           <h1>Kaan Kartal Kuyucu</h1>
           <h2>I turn messy business data into clear, profitable strategy.</h2>
@@ -65,9 +65,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* YETENEKLER */}
+        {/* SKILLS */}
         <section className="section">
-          <h3>Yetenekler</h3>
+          <h3>Skills</h3>
           <div className="skill-groups">
             {skillGroups.map((group) => (
               <div className="skill-group" key={group.label}>
@@ -84,9 +84,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* İLETİŞİM */}
+        {/* CONTACT */}
         <section className="section" id="contact">
-          <h3>İletişim</h3>
+          <h3>Contact</h3>
           <div className="contact">
             <a href="mailto:kkaankartal@gmail.com">kkaankartal@gmail.com</a>
             <a href="https://github.com/kaankartalk" target="_blank" rel="noopener noreferrer">
