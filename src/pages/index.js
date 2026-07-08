@@ -30,7 +30,7 @@ export default function Home() {
         <section className="hero">
           <h1>Kaan Kartal Kuyucu</h1>
           <p className="about">
-            I'm learning machine learning and data science, drawn to turning messy, real-world
+            I&apos;m learning machine learning and data science, drawn to turning messy, real-world
             data into decisions worth acting on. Business strategy is the lens I point it through.
           </p>
         </section>
