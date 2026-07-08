@@ -97,14 +97,14 @@ export default function ProjectDetail() {
           margin: 0 auto;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
-        .back-link {
+        :global(.back-link) {
           display: inline-block;
           color: #9ca3af;
           text-decoration: none;
           font-size: 0.9rem;
           margin-bottom: 1.5rem;
         }
-        .back-link:hover {
+        :global(.back-link:hover) {
           color: #ededed;
         }
         h1 {
@@ -129,7 +129,7 @@ export default function ProjectDetail() {
           text-decoration: underline;
           font-size: 0.9rem;
         }
-        .dashboard-link {
+        :global(.dashboard-link) {
           display: inline-block;
           background: rgba(131, 197, 160, 0.12);
           border: 1px solid #83c5a0;
@@ -141,7 +141,7 @@ export default function ProjectDetail() {
           border-radius: 8px;
           transition: background-color 0.2s;
         }
-        .dashboard-link:hover {
+        :global(.dashboard-link:hover) {
           background: rgba(131, 197, 160, 0.22);
         }
         .sections {

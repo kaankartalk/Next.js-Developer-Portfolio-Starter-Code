@@ -1,6 +1,8 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import Nav from '../components/Nav'
+import ConstellationBackground from '../components/ConstellationBackground'
+import CardAccent from '../components/CardAccent'
 import { categories } from '../data/projects'
 
 const skills = ['SQL', 'Python', 'Scikit-learn', 'Pandas', 'NumPy']
@@ -15,6 +17,9 @@ export default function Home() {
       </Head>
 
       <main className="page">
+        <ConstellationBackground />
+
+        <div className="content">
         <Nav showLogo />
 
         {/* HERO / HAKKIMDA */}
@@ -52,6 +57,7 @@ export default function Home() {
               const extraTagCount = (category.tags || []).length - visibleTags.length
               return (
                 <Link href={`/topics/${category.id}`} className="curious-card" key={category.id}>
+                  <CardAccent type={category.id} />
                   <h4>{category.label}</h4>
                   <p>{category.blurb}</p>
                   {visibleTags.length > 0 ? (
@@ -84,17 +90,23 @@ export default function Home() {
         <footer className="footer">
           <p>© {new Date().getFullYear()} Kaan Kartal Kuyucu</p>
         </footer>
+        </div>
       </main>
 
       <style jsx>{`
         .page {
+          position: relative;
           min-height: 100vh;
           background: #0a0a0a;
           color: #ededed;
-          padding: 4rem 2 rem;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .content {
+          position: relative;
+          z-index: 1;
+          padding: 4rem 2rem;
           max-width: 1100px;
           margin: 0 auto;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         .navbar {
           display: flex;
@@ -169,7 +181,9 @@ export default function Home() {
             grid-template-columns: 1fr;
           }
         }
-        .curious-card {
+        :global(.curious-card) {
+          position: relative;
+          overflow: hidden;
           display: block;
           background: #141414;
           border: 1px solid #262626;
@@ -179,16 +193,21 @@ export default function Home() {
           color: inherit;
           transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
         }
-        .curious-card:hover {
+        :global(.curious-card:hover) {
           background: #1c3a2c;
           border-color: #83c5a0;
           transform: translateY(-2px);
         }
-        .curious-card h4 {
+        :global(.curious-card) h4 {
+          position: relative;
+          z-index: 1;
           font-size: 1.1rem;
           margin-bottom: 0.4rem;
+          max-width: 75%;
         }
-        .curious-card p {
+        :global(.curious-card) p {
+          position: relative;
+          z-index: 1;
           color: #b0b0b0;
           font-size: 0.9rem;
           line-height: 1.6;

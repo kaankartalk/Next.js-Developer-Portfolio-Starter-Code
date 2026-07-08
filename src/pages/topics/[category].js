@@ -75,13 +75,13 @@ export default function TopicDetail() {
           max-width: 800px;
           margin: 0 auto;
         }
-        .page-space .item-card {
+        :global(.page-space .item-card) {
           background: rgba(18, 18, 22, 0.6);
           backdrop-filter: blur(8px);
           -webkit-backdrop-filter: blur(8px);
           border-color: rgba(131, 197, 160, 0.25);
         }
-        .page-space .item-card:hover {
+        :global(.page-space .item-card:hover) {
           background: rgba(24, 32, 28, 0.7);
         }
         .back-link {
@@ -107,7 +107,7 @@ export default function TopicDetail() {
           display: grid;
           gap: 1rem;
         }
-        .item-card {
+        :global(.item-card) {
           display: block;
           background: #141414;
           border: 1px solid #262626;
@@ -117,14 +117,14 @@ export default function TopicDetail() {
           color: inherit;
           transition: border-color 0.2s;
         }
-        .item-card:hover {
+        :global(.item-card:hover) {
           border-color: #83c5a0;
         }
-        .item-card h2 {
+        :global(.item-card) h2 {
           font-size: 1.1rem;
           margin-bottom: 0.4rem;
         }
-        .item-card p {
+        :global(.item-card) p {
           color: #b0b0b0;
           font-size: 0.95rem;
           margin-bottom: 0.6rem;
