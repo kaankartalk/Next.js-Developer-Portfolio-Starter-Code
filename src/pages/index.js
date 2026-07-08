@@ -31,9 +31,8 @@ export default function Home() {
           <h1>Kaan Kartal Kuyucu</h1>
           <h2>I turn messy business data into clear, profitable strategy.</h2>
           <p className="about">
-            From satellite collision risk to telecom retention economics — I turn messy,
-            real-world data into decisions worth acting on. Data science is my toolkit;
-            business strategy is the lens I point it through.
+            I turn messy, real-world data into decisions worth acting on. Data science is my
+            toolkit; business strategy is the lens I point it through.
           </p>
         </section>
 
