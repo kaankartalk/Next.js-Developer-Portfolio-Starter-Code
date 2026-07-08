@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Nav from '../../components/Nav'
+import SpaceBackground from '../../components/SpaceBackground'
 import { categories, projects } from '../../data/projects'
 
 export default function TopicDetail() {
@@ -27,40 +28,61 @@ export default function TopicDetail() {
         <title>{category.label} | Kaan Kartal Kuyucu</title>
       </Head>
 
-      <main className="page">
-        <Nav />
+      <main className={`page ${category.id === 'space' ? 'page-space' : ''}`}>
+        {category.id === 'space' ? <SpaceBackground /> : null}
 
-        <Link href="/#projects" className="back-link">
-          Back to What I&apos;m curious about
-        </Link>
+        <div className="content">
+          <Nav />
 
-        <h1>{category.label}</h1>
-        <p className="blurb">{category.blurb}</p>
+          <Link href="/#projects" className="back-link">
+            Back to What I&apos;m curious about
+          </Link>
 
-        <div className="items">
-          {categoryProjects.length > 0 ? (
-            categoryProjects.map((project) => (
-              <Link href={`/projects/${project.slug}`} className="item-card" key={project.slug}>
-                <h2>{project.title}</h2>
-                <p>{project.shortDescription}</p>
-                <span className="tech">{project.tech}</span>
-              </Link>
-            ))
-          ) : (
-            <p className="empty">Nothing published under this topic yet — check back soon.</p>
-          )}
+          <h1>{category.label}</h1>
+          <p className="blurb">{category.blurb}</p>
+
+          <div className="items">
+            {categoryProjects.length > 0 ? (
+              categoryProjects.map((project) => (
+                <Link href={`/projects/${project.slug}`} className="item-card" key={project.slug}>
+                  <h2>{project.title}</h2>
+                  <p>{project.shortDescription}</p>
+                  <span className="tech">{project.tech}</span>
+                </Link>
+              ))
+            ) : (
+              <p className="empty">Nothing published under this topic yet — check back soon.</p>
+            )}
+          </div>
         </div>
       </main>
 
       <style jsx>{`
         .page {
+          position: relative;
           min-height: 100vh;
           background: #0a0a0a;
           color: #ededed;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .page-space {
+          background: transparent;
+        }
+        .content {
+          position: relative;
+          z-index: 1;
           padding: 3rem 1.5rem;
           max-width: 800px;
           margin: 0 auto;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .page-space .item-card {
+          background: rgba(18, 18, 22, 0.6);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          border-color: rgba(131, 197, 160, 0.25);
+        }
+        .page-space .item-card:hover {
+          background: rgba(24, 32, 28, 0.7);
         }
         .back-link {
           display: inline-block;
