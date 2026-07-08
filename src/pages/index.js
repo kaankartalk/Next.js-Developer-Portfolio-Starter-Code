@@ -5,7 +5,11 @@ import ConstellationBackground from '../components/ConstellationBackground'
 import CardAccent from '../components/CardAccent'
 import { categories } from '../data/projects'
 
-const skills = ['SQL', 'Python', 'Scikit-learn', 'Pandas', 'NumPy']
+const skillGroups = [
+  { label: 'Languages & Data', skills: ['Python', 'SQL', 'Pandas', 'NumPy'] },
+  { label: 'Modeling', skills: ['Scikit-learn', 'XGBoost', 'Statistical Modeling'] },
+  { label: 'Visualization & Dashboards', skills: ['Matplotlib', 'React / Recharts'] },
+]
 
 export default function Home() {
   return (
@@ -27,25 +31,10 @@ export default function Home() {
           <h1>Kaan Kartal Kuyucu</h1>
           <h2>I turn messy business data into clear, profitable strategy.</h2>
           <p className="about">
-            Think of me as a Strategy Analyst powered by data science and grounded in
-            project management. I look at how businesses perform, find the friction
-            points, and build the strategic frameworks to eliminate them. By combining
-            management consulting principles with predictive data insights, I help
-            organizations look around corners and turn messy operational challenges
-            into structured, highly profitable strategies.
+            From satellite collision risk to telecom retention economics — I turn messy,
+            real-world data into decisions worth acting on. Data science is my toolkit;
+            business strategy is the lens I point it through.
           </p>
-        </section>
-
-        {/* YETENEKLER */}
-        <section className="section">
-          <h3>Yetenekler</h3>
-          <div className="skills">
-            {skills.map((skill) => (
-              <span className="skill-badge" key={skill}>
-                {skill}
-              </span>
-            ))}
-          </div>
         </section>
 
         {/* WHAT I'M CURIOUS ABOUT */}
@@ -76,6 +65,25 @@ export default function Home() {
           </div>
         </section>
 
+        {/* YETENEKLER */}
+        <section className="section">
+          <h3>Yetenekler</h3>
+          <div className="skill-groups">
+            {skillGroups.map((group) => (
+              <div className="skill-group" key={group.label}>
+                <span className="skill-group-label">{group.label}</span>
+                <div className="skills">
+                  {group.skills.map((skill) => (
+                    <span className="skill-badge" key={skill}>
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* İLETİŞİM */}
         <section className="section" id="contact">
           <h3>İletişim</h3>
@@ -83,6 +91,9 @@ export default function Home() {
             <a href="mailto:kkaankartal@gmail.com">kkaankartal@gmail.com</a>
             <a href="https://github.com/kaankartalk" target="_blank" rel="noopener noreferrer">
               GitHub
+            </a>
+            <a href="https://medium.com/@kkaankartal" target="_blank" rel="noopener noreferrer">
+              Medium
             </a>
           </div>
         </section>
@@ -158,6 +169,19 @@ export default function Home() {
           margin-bottom: 1rem;
           border-bottom: 1px solid #262626;
           padding-bottom: 0.5rem;
+        }
+        .skill-groups {
+          display: flex;
+          flex-direction: column;
+          gap: 1.2rem;
+        }
+        .skill-group-label {
+          display: block;
+          font-size: 0.78rem;
+          color: #7c7c7c;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          margin-bottom: 0.6rem;
         }
         .skills {
           display: flex;
