@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 export default function Nav({ showLogo }) {
   const router = useRouter()
   const isActive = (href) => router.pathname === href
+  const isActivePrefix = (prefix) => router.pathname.startsWith(prefix)
 
   return (
     <nav className={showLogo ? 'navbar' : 'nav'}>
@@ -18,6 +19,9 @@ export default function Nav({ showLogo }) {
         </Link>
         <Link href="/blog" className={isActive('/blog') ? 'active' : ''}>
           Medium Stories
+        </Link>
+        <Link href="/regulations" className={isActivePrefix('/regulations') ? 'active' : ''}>
+          AI & Data Regulations
         </Link>
         <Link href="/#contact">Contact</Link>
       </div>
