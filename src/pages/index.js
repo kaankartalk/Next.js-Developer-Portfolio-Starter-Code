@@ -29,10 +29,9 @@ export default function Home() {
         {/* HERO / ABOUT */}
         <section className="hero">
           <h1>Kaan Kartal Kuyucu</h1>
-          <h2>I turn messy business data into clear, profitable strategy.</h2>
           <p className="about">
-            I turn messy, real-world data into decisions worth acting on. Data science is my
-            toolkit; business strategy is the lens I point it through.
+            I'm learning machine learning and data science, drawn to turning messy, real-world
+            data into decisions worth acting on. Business strategy is the lens I point it through.
           </p>
         </section>
 
@@ -148,13 +147,7 @@ export default function Home() {
         }
         .hero h1 {
           font-size: 2.5rem;
-          margin-bottom: 0.25rem;
-        }
-        .hero h2 {
-          font-size: 1.1rem;
-          font-weight: 400;
-          color: #9ca3af;
-          margin-bottom: 1.5rem;
+          margin-bottom: 1.2rem;
         }
         .about {
           line-height: 1.7;
